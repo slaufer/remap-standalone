@@ -1,0 +1,42 @@
+appId: app.remap-keys.remap
+productName: Remap
+copyright: Copyright © 2024 Remap
+
+directories:
+  output: dist-electron
+  # Override the default ("build") to avoid colliding with Vite's output directory
+  buildResources: buildAssets
+
+# Only include what is needed: compiled main process + web build + manifest
+files:
+  - electron-out/**/*
+  - build/**/*
+  - package.json
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: public/logo512.png
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  icon: public/logo512.png
+  category: public.app-category.utilities
+
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: public/logo512.png
+  category: Utility
+
+publish:
+  provider: github
+  releaseType: release

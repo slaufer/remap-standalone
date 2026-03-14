@@ -11,6 +11,10 @@
 # production
 /build
 
+# electron desktop build output
+/dist-electron
+/electron-out
+
 # misc
 .DS_Store
 .vscode

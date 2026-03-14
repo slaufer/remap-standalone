@@ -36,6 +36,48 @@ We're using Prettier to format codes. Execute the `yarn format` before committin
 
 Before contributing, read the [How to become a contributor and submit your own code](https://github.com/remap-keys/remap/blob/main/CONTRIBUTING.md) document.
 
+## Desktop App
+
+Remap is also available as a cross-platform desktop application built with Electron. The desktop app bundles Chromium, so no separate browser installation is required, and WebHID keyboard access is granted automatically without browser permission prompts.
+
+### Installation
+
+Download the latest installer for your platform from the [GitHub Releases page](https://github.com/remap-keys/remap/releases):
+
+- **Windows**: `.exe` (NSIS installer)
+- **macOS**: `.dmg`
+- **Linux**: `.AppImage` or `.deb`
+
+### Linux: udev rules for WebHID
+
+On Linux, non-root processes need permission to access HID devices. Add a udev rule for your keyboard's USB vendor/product ID:
+
+```bash
+# Example: allow all users to access HID devices (adjust VID/PID as needed)
+echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' \
+  | sudo tee /etc/udev/rules.d/99-remap-hid.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+Then add your user to the `plugdev` group: `sudo usermod -aG plugdev $USER` (log out and back in to apply).
+
+### Development: running the desktop app locally
+
+```bash
+# Install dependencies (first time)
+yarn install
+
+# Start Electron app in development mode (connects to Vite dev server)
+yarn electron:start
+
+# Build web assets + compile Electron main process
+yarn electron:build
+
+# Build and package installers for the current platform
+yarn electron:dist
+# Output: dist-electron/
+```
+
 ## References
 
 ### WebHID
