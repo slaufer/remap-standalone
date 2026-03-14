@@ -4,7 +4,6 @@ import { RootState, SetupPhase } from '../../store/state';
 import { HidActions, hidActionsThunk } from '../../actions/hid.action';
 import {
   AppActions,
-  AppActionsThunk,
   KeymapToolbarActions,
   NotificationActions,
 } from '../../actions/actions';
@@ -17,8 +16,6 @@ const mapStateToProps = (state: RootState) => {
     remaps: state.app.remaps,
     notifications: state.app.notifications,
     hid: state.hid,
-    auth: state.auth.instance,
-    storage: state.storage.instance,
     draggingKey: state.configure.keycodeKey.draggingKey,
     testMatrix: state.configure.keymapToolbar.testMatrix,
     keyboard: state.entities.keyboard,
@@ -78,11 +75,6 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(hidActionsThunk.closeKeyboard(keyboard));
     },
 
-    updateSignedIn: (signedIn: boolean) => {
-      dispatch(AppActions.updateSignedIn(signedIn));
-      dispatch(AppActionsThunk.fetchUserInformation());
-      dispatch(AppActionsThunk.fetchUserPurchase());
-    },
     initializeMeta: () => {
       dispatch(MetaActions.initialize());
     },

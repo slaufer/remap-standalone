@@ -14,7 +14,6 @@ import {
   IKeyboardDefinitionDocument,
   KeyboardDefinitionStatus,
 } from '../../../services/storage/Storage';
-import ProfileIcon from '../../common/auth/ProfileIcon.container';
 import { t } from 'i18next';
 
 type HeaderState = {
@@ -243,7 +242,6 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
                 {t('Flash')}
               </button>
             </div>
-            <ProfileIcon logout={() => this.props.logout!()} />
           </div>
           {(this.props.draggingKey || this.props.testMatrix) && (
             <div className="dragMask header-height"></div>

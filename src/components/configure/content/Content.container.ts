@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import Content from './Content';
 import { RootState } from '../../../store/state';
-import { storageActionsThunk } from '../../../actions/storage.action';
 import { IDeviceInformation } from '../../../services/hid/Hid';
 
 const mapStateToProps = (state: RootState) => {
@@ -16,10 +15,9 @@ export type ContentStateType = ReturnType<typeof mapStateToProps>;
 
 const mapDispatchToProps = (_dispatch: any) => {
   return {
-    fetchSavedKeymaps: (info: IDeviceInformation) => {
-      _dispatch(storageActionsThunk.fetchMySavedKeymaps(info));
-      _dispatch(storageActionsThunk.fetchSharedKeymaps(info, true));
-      _dispatch(storageActionsThunk.fetchMyAppliedKeymaps(info));
+    // eslint-disable-next-line no-unused-vars
+    fetchSavedKeymaps: (_info: IDeviceInformation) => {
+      // Cloud feature removed
     },
   };
 };

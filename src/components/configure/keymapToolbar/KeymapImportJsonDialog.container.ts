@@ -11,7 +11,6 @@ import {
   convertJsonDataToEncoderRemaps,
   convertJsonDataToRemaps,
 } from '../../../utils/KeymapJsonSerializer';
-import { sendEventToGoogleAnalytics } from '../../../utils/GoogleAnalytics';
 import { ThunkDispatch } from 'redux-thunk';
 import { ThunkAction } from 'redux-thunk';
 
@@ -44,7 +43,6 @@ const mapDispatchToProps = (
         const encodersKeymaps = entities.device.encodersKeymaps;
         const layerCount = entities.device.layerCount;
         const keyboardDefinition = entities.keyboardDefinition;
-        const info = entities.keyboard?.getInformation();
 
         const remaps = convertJsonDataToRemaps(
           data,
@@ -64,11 +62,6 @@ const mapDispatchToProps = (
         _dispatch(AppActions.encodersRemapsSetKeys(encoderRemaps));
         _dispatch(LayoutOptionsActions.restoreLayoutOptions(data.layoutOptions));
 
-        sendEventToGoogleAnalytics('configure/import_keymap_json', {
-          vendor_id: info?.vendorId,
-          product_id: info?.productId,
-          product_name: info?.productName,
-        });
       };
       dispatch(thunk);
     },

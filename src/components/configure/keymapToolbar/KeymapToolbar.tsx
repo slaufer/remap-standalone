@@ -31,10 +31,7 @@ import LightingDialog from '../lighting/LightingDialog';
 import LayoutOptionPopover from '../layoutoption/LayoutOptionPopover.container';
 import { ImportFileIcon } from '../../common/icons/ImportFileIcon';
 import ImportDefDialog from '../importDef/ImportDefDialog.container';
-import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
-import KeymapListPopover from '../keymaplist/KeymapListPopover.container';
-import { sendEventToGoogleAnalytics } from '../../../utils/GoogleAnalytics';
 import { Restore as RestoreIcon } from '@mui/icons-material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -53,7 +50,6 @@ type KeymapMenuPropsType = OwnProp &
 type OwnKeymapMenuStateType = {
   openLightingDialog: boolean;
   layoutOptionPopoverPosition: { left: number; top: number } | null;
-  keymapListPopoverPosition: { left: number; top: number } | null;
   openImportDefDialog: boolean;
   openImportJsonDialog: boolean;
   subMenuAnchorEl: (EventTarget & Element) | null;
@@ -69,7 +65,6 @@ export default class KeymapMenu extends React.Component<
     this.state = {
       openLightingDialog: false,
       layoutOptionPopoverPosition: null,
-      keymapListPopoverPosition: null,
       openImportDefDialog: false,
       openImportJsonDialog: false,
       subMenuAnchorEl: null,
@@ -98,11 +93,6 @@ export default class KeymapMenu extends React.Component<
   }
 
   private onClickClearAllChanges() {
-    sendEventToGoogleAnalytics('configure/clear_all_changes', {
-      vendor_id: this.props.keyboard!.getInformation().vendorId,
-      product_id: this.props.keyboard!.getInformation().productId,
-      product_name: this.props.keyboard!.getInformation().productName,
-    });
     this.props.clearAllRemaps!(this.props.layerCount!);
   }
 
@@ -151,12 +141,6 @@ export default class KeymapMenu extends React.Component<
       this.props.labelLang!
     );
 
-    sendEventToGoogleAnalytics('configure/cheat_sheet', {
-      vendor_id: this.props.keyboard!.getInformation().vendorId,
-      product_id: this.props.keyboard!.getInformation().productId,
-      product_name: this.props.keyboard!.getInformation().productName,
-    });
-
     pdf.genPdf(productName, this.props.selectedKeyboardOptions!).catch((e) => {
       console.error(e);
       const msg = `Couldn't generate the PDF. Please check your keyboard and definition file(.json).`;
@@ -168,29 +152,7 @@ export default class KeymapMenu extends React.Component<
     this.props.startTypingPractice!();
   }
 
-  private onClickOpenKeymapListPopover(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
-    const { left, top } = event.currentTarget.getBoundingClientRect();
-    this.setState({
-      keymapListPopoverPosition: {
-        left,
-        top,
-      },
-    });
-  }
-
-  private onCloseKeymapListPopover() {
-    this.setState({ keymapListPopoverPosition: null });
-  }
-
   private onLightingClick() {
-    sendEventToGoogleAnalytics('configure/lighting', {
-      vendor_id: this.props.keyboard!.getInformation().vendorId,
-      product_id: this.props.keyboard!.getInformation().productId,
-      product_name: this.props.keyboard!.getInformation().productName,
-    });
-
     this.setState({ openLightingDialog: true });
   }
 
@@ -239,11 +201,6 @@ export default class KeymapMenu extends React.Component<
     });
     const filename = `keymap_${productName}.json`;
     download(JSON.stringify(data, null, 2), filename, 'application/json');
-    sendEventToGoogleAnalytics('configure/export_keymap_json', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: productName,
-    });
   }
 
   private onClickOpenImportJsonDialog() {
@@ -321,30 +278,6 @@ export default class KeymapMenu extends React.Component<
               />
             </div>
           )}
-
-          <div className="keymap-menu-item">
-            <Tooltip
-              arrow={true}
-              placement="top"
-              title={t('Save/Restore a keymap')}
-            >
-              <IconButton
-                size="small"
-                onClick={(event) => {
-                  this.onClickOpenKeymapListPopover(event);
-                }}
-              >
-                <SwapHorizRoundedIcon />
-              </IconButton>
-            </Tooltip>
-            <KeymapListPopover
-              open={Boolean(this.state.keymapListPopoverPosition)}
-              onClose={() => {
-                this.onCloseKeymapListPopover();
-              }}
-              position={this.state.keymapListPopoverPosition}
-            />
-          </div>
 
           <div className="keymap-menu-item">
             <Tooltip

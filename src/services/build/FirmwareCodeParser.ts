@@ -1,7 +1,18 @@
-import {
-  IBuildableFirmwareCodeParameter,
-  IBuildableFirmwareCodeParameterType,
-} from '../../store/state';
+export type IBuildableFirmwareCodeParameterType =
+  | 'select'
+  | 'text'
+  | 'number'
+  | 'toggle';
+
+export type IBuildableFirmwareCodeParameter = {
+  name: string;
+  type: IBuildableFirmwareCodeParameterType;
+  options: string[];
+  default: string;
+  comment: string | undefined;
+  startPosition: number;
+  endPosition: number;
+};
 
 const extractAttribute = (
   tag: string,

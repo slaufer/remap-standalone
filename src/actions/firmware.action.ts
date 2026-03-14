@@ -9,7 +9,6 @@ import {
   IFlashFirmwareDialogMode,
   RootState,
 } from '../store/state';
-import { sendEventToGoogleAnalytics } from '../utils/GoogleAnalytics';
 import intelHex from 'intel-hex';
 import { IFirmware, IFirmwareBuildingTask } from '../services/storage/Storage';
 import { IBootloaderType } from '../services/firmware/Types';
@@ -192,68 +191,16 @@ export const firmwareActionsThunk = {
       dispatch(FlashFirmwareDialogActions.updateMode('loading'));
       dispatch(FlashFirmwareDialogActions.updateFlashing(false));
 
-      const { common, entities, storage } = getState();
-      const firmware = common.firmware.flashFirmwareDialog.firmware!;
+      const { common } = getState();
       const bootloaderType =
         common.firmware.flashFirmwareDialog.bootloaderType!;
       const flashMode = common.firmware.flashFirmwareDialog.flashMode;
       let flashBytes: Buffer | undefined;
-      if (flashMode === 'fetch_and_flash') {
-        const definitionDocument = entities.keyboardDefinitionDocument!;
-        sendEventToGoogleAnalytics('catalog/flash_firmware', {
-          vendor_id: definitionDocument.vendorId,
-          product_id: definitionDocument.productId,
-          product_name: definitionDocument.productName,
-        });
-        dispatch(
-          FlashFirmwareDialogActions.appendLog(
-            'Reading the firmware binary from the server.',
-            false
-          )
+      if (flashMode === 'fetch_and_flash' || flashMode === 'build_and_flash') {
+        handleError(
+          'Fetching firmware from server is not supported in this build.'
         );
-        const fetchBlobResult = await storage.instance!.fetchFirmwareFileBlob(
-          definitionDocument.id,
-          firmware.filename,
-          'flash'
-        );
-        if (isError(fetchBlobResult)) {
-          handleError(fetchBlobResult.error, fetchBlobResult.cause);
-          return;
-        }
-        const blob: Blob = fetchBlobResult.value.blob;
-        flashBytes = createFlashBytes(
-          Buffer.from(new Uint8Array(await blob.arrayBuffer())),
-          bootloaderType,
-          dispatch
-        );
-        if (flashBytes === undefined) {
-          return;
-        }
-      } else if (flashMode === 'build_and_flash') {
-        dispatch(
-          FlashFirmwareDialogActions.appendLog(
-            'Reading the firmware binary from the server.',
-            false
-          )
-        );
-        const task = common.firmware.flashFirmwareDialog.buildingFirmwareTask!;
-        const fetchBlobResult =
-          await storage.instance!.fetchBuiltFirmwareFileBlob(
-            task.firmwareFilePath
-          );
-        if (isError(fetchBlobResult)) {
-          handleError(fetchBlobResult.error, fetchBlobResult.cause);
-          return;
-        }
-        const blob: Blob = fetchBlobResult.value.blob;
-        flashBytes = createFlashBytes(
-          Buffer.from(new Uint8Array(await blob.arrayBuffer())),
-          bootloaderType,
-          dispatch
-        );
-        if (flashBytes === undefined) {
-          return;
-        }
+        return;
       } else {
         flashBytes = createFlashBytes(
           Buffer.from(

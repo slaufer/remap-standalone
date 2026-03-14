@@ -109,12 +109,6 @@ function Configure(props: ConfigureProps) {
     }
     props.initAppPackage!(APPLICATION_NAME, String(props.buildNumber!));
 
-    if (props.auth) {
-      props.auth.subscribeAuthStatus((user) => {
-        props.updateSignedIn!(!!user);
-      });
-    }
-
     updateTitle();
     updateNotifications();
     initKeyboardConnectionEventHandler();

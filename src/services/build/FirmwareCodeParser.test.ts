@@ -1,8 +1,8 @@
 import {
   extractBuildableFirmwareCodeParameters,
   replaceBuildableFirmwareCodeWithParameterDefaultValues,
+  IBuildableFirmwareCodeParameter,
 } from './FirmwareCodeParser';
-import { IBuildableFirmwareCodeParameter } from '../../store/state';
 
 describe('FirmwareCodeParser', () => {
   describe('replaceBuildableFirmwareCodeWithParameterDefaultValues', () => {

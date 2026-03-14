@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import KeymapSaveDialog from './KeymapSaveDialog';
 import { RootState } from '../../../store/state';
-import { storageActionsThunk } from '../../../actions/storage.action';
 import { SavedKeymapData } from '../../../services/storage/Storage';
 
 const mapStateToProps = (state: RootState) => {
@@ -20,14 +19,17 @@ export type KeymapSaveDialogStateType = ReturnType<typeof mapStateToProps>;
 
 const mapDispatchToProps = (_dispatch: any) => {
   return {
-    createSavedKeymap: (keymapData: SavedKeymapData) => {
-      _dispatch(storageActionsThunk.createSavedKeymap(keymapData));
+    // eslint-disable-next-line no-unused-vars
+    createSavedKeymap: (_keymapData: SavedKeymapData) => {
+      // Cloud feature removed
     },
-    updateSavedKeymap: (keymapData: SavedKeymapData) => {
-      _dispatch(storageActionsThunk.updateSavedKeymap(keymapData));
+    // eslint-disable-next-line no-unused-vars
+    updateSavedKeymap: (_keymapData: SavedKeymapData) => {
+      // Cloud feature removed
     },
-    deleteSavedKeymap: (keymapData: SavedKeymapData) => {
-      _dispatch(storageActionsThunk.deleteSavedKeymap(keymapData));
+    // eslint-disable-next-line no-unused-vars
+    deleteSavedKeymap: (_keymapData: SavedKeymapData) => {
+      // Cloud feature removed
     },
   };
 };

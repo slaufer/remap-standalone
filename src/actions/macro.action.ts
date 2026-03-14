@@ -9,7 +9,6 @@ import {
 } from '../services/macro/Macro';
 import { NotificationActions } from './actions';
 import { HidActions } from './hid.action';
-import { sendEventToGoogleAnalytics } from '../utils/GoogleAnalytics';
 import { QK_MACRO_MIN } from '../services/hid/compositions/MacroComposition';
 
 export const MACRO_EDITOR_ACTIONS = '@MacroEditor';
@@ -122,12 +121,6 @@ export const MacroActionsThunk = {
       getState: () => RootState
     ) => {
       const { configure, entities } = getState();
-      const keyboard = entities.keyboard!;
-      sendEventToGoogleAnalytics('configure/flash_macro', {
-        vendor_id: keyboard.getInformation().vendorId,
-        product_id: keyboard.getInformation().productId,
-        product_name: keyboard.getInformation().productName,
-      });
 
       const macroBuffer = configure.macroEditor.macroBuffer;
       const bytes = macroBuffer!.getBytes();

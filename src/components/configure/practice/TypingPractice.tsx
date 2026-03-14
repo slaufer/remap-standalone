@@ -25,8 +25,6 @@ import {
   PRACTICE_CATEGORIES,
   PracticeCategoryId,
 } from '../../../services/practice/PracticeTexts';
-import { sendEventToGoogleAnalytics } from '../../../utils/GoogleAnalytics';
-
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 type OwnProps = {};
@@ -53,8 +51,6 @@ export function TypingPractice(props: TypingPracticeProps) {
     updateStats,
     reset,
     resetStatistics,
-    loadTypingStats,
-    saveTypingStats,
     updateCategory,
     updateSentences,
     nextSentence,
@@ -66,33 +62,6 @@ export function TypingPractice(props: TypingPracticeProps) {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasLoadedStatsRef = useRef(false);
-
-  // Load typing stats from Firestore on mount
-  useEffect(() => {
-    if (
-      keyboardId &&
-      signedIn &&
-      loadTypingStats &&
-      !hasLoadedStatsRef.current
-    ) {
-      hasLoadedStatsRef.current = true;
-      loadTypingStats(keyboardId);
-    }
-  }, [keyboardId, signedIn, loadTypingStats]);
-
-  // Save typing stats on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-      if (keyboardId && signedIn && saveTypingStats) {
-        saveTypingStats(keyboardId);
-      }
-    };
-  }, [keyboardId, signedIn, saveTypingStats]);
 
   // Load sentences when category changes or on mount
   useEffect(() => {
@@ -132,14 +101,6 @@ export function TypingPractice(props: TypingPracticeProps) {
         }
       } else {
         // All sentences completed
-        sendEventToGoogleAnalytics('practice/complete', {
-          vendor_id: vendorId,
-          product_id: productId,
-          product_name: keyboardId,
-        });
-        if (keyboardId && signedIn && saveTypingStats) {
-          saveTypingStats(keyboardId);
-        }
         setSnackbarOpen(true);
       }
     }
@@ -152,7 +113,6 @@ export function TypingPractice(props: TypingPracticeProps) {
     vendorId,
     productId,
     signedIn,
-    saveTypingStats,
   ]);
 
   // Add this new useEffect hook
@@ -203,11 +163,6 @@ export function TypingPractice(props: TypingPracticeProps) {
   };
 
   const handleConfirmReset = () => {
-    sendEventToGoogleAnalytics('practice/reset_statistics', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: keyboardId,
-    });
     if (keyboardId && resetStatistics) {
       resetStatistics(keyboardId);
     }
@@ -232,16 +187,6 @@ export function TypingPractice(props: TypingPracticeProps) {
         if (keyboardId && expectedChar) {
           const isCorrect = typedChar === expectedChar;
           updateStats(keyboardId, expectedChar, isCorrect);
-
-          // Debounced save to Firestore (5 seconds)
-          if (signedIn && saveTypingStats) {
-            if (saveTimeoutRef.current) {
-              clearTimeout(saveTimeoutRef.current);
-            }
-            saveTimeoutRef.current = setTimeout(() => {
-              saveTypingStats(keyboardId);
-            }, 5000);
-          }
         }
       }
 
@@ -253,31 +198,16 @@ export function TypingPractice(props: TypingPracticeProps) {
   };
 
   const handleStart = () => {
-    sendEventToGoogleAnalytics('practice/start', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: keyboardId,
-    });
     setCountdown(3);
   };
 
   const handleReset = () => {
-    sendEventToGoogleAnalytics('practice/reset', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: keyboardId,
-    });
     if (reset) {
       reset();
     }
   };
 
   const handleExit = () => {
-    sendEventToGoogleAnalytics('practice/exit', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: keyboardId,
-    });
     if (exitPracticeMode) {
       exitPracticeMode();
     }
@@ -291,12 +221,6 @@ export function TypingPractice(props: TypingPracticeProps) {
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
     const categoryId = event.target.value as PracticeCategoryId;
-    sendEventToGoogleAnalytics('practice/category_change', {
-      vendor_id: vendorId,
-      product_id: productId,
-      product_name: keyboardId,
-      category_id: categoryId,
-    });
     if (updateCategory) {
       updateCategory(categoryId);
     }

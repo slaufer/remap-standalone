@@ -2,30 +2,17 @@ import { NotificationItem } from '../actions/actions';
 import { Key } from '../components/configure/keycodekey/KeyGen';
 import { IEncoderKeymaps, IHid, IKeyboard, IKeymap } from '../services/hid/Hid';
 import { WebHid } from '../services/hid/WebHid';
-import { FirebaseProvider } from '../services/provider/Firebase';
 import {
-  AbstractKeymapData,
   AppliedKeymapData,
-  IAdditionalDescription,
   IBuildableFirmware,
   IBuildableFirmwareFile,
-  IBuildableFirmwareFileType,
   IFirmware,
   IFirmwareBuildingTask,
-  IKeyboardDefinitionAuthorType,
   IKeyboardDefinitionDocument,
-  IKeyboardStatistics,
   IOrganization,
-  IOrganizationMember,
-  IStorage,
-  IStore,
-  IUserPurchaseHistory,
-  IWorkbenchProject,
   SavedKeymapData,
 } from '../services/storage/Storage';
-import { IAuth } from '../services/auth/Auth';
 import { KeyboardDefinitionSchema } from '../gen/types/KeyboardDefinition';
-import { GitHub, IGitHub } from '../services/github/GitHub';
 import buildInfo from '../assets/files/build-info.json';
 import {
   getDefaultCategory,
@@ -40,8 +27,6 @@ import { IMacro, IMacroBuffer, MacroKey } from '../services/macro/Macro';
 import { IFirmwareWriter } from '../services/firmware/FirmwareWriter';
 import { FirmwareWriterWebApiImpl } from '../services/firmware/FirmwareWriterWebApiImpl';
 import { IBootloaderType } from '../services/firmware/Types';
-import { getLocalAuthenticationUid } from '../utils/AuthUtils';
-import { firebaseConfiguration } from '../services/provider/FirebaseConfiguration';
 
 export type ISetupPhase =
   | 'init'
@@ -60,116 +45,6 @@ export const SetupPhase: { [p: string]: ISetupPhase } = {
   openingKeyboard: 'openingKeyboard',
   openedKeyboard: 'openedKeyboard',
 };
-
-export type IKeyboardsPhase =
-  | 'signing'
-  | 'init'
-  | 'list'
-  | 'create'
-  | 'processing'
-  | 'edit'
-  | 'catalog'
-  | 'firmware'
-  | 'build'
-  | 'statistics'
-  | 'signout';
-export const KeyboardsPhase: { [p: string]: IKeyboardsPhase } = {
-  signing: 'signing',
-  init: 'init',
-  list: 'list',
-  create: 'create',
-  processing: 'processing',
-  edit: 'edit',
-  catalog: 'catalog',
-  firmware: 'firmware',
-  build: 'build',
-  statistics: 'statistics',
-  signout: 'signout',
-};
-
-export const ALL_CATALOG_PHASE = [
-  'init',
-  'processing',
-  'list',
-  'introduction',
-  'keymap',
-  'firmware',
-  'build',
-] as const;
-type catalogPhaseTuple = typeof ALL_CATALOG_PHASE;
-export type ICatalogPhase = catalogPhaseTuple[number];
-
-export type IFirmwareCodePlace = 'qmk' | 'forked' | 'other';
-export const FirmwareCodePlace: { [p: string]: IFirmwareCodePlace } = {
-  qmk: 'qmk',
-  forked: 'forked',
-  other: 'other',
-};
-
-export const ALL_KEY_COUNT_TYPE = [
-  'over_100',
-  '100',
-  '90',
-  '80',
-  '70',
-  '60',
-  '50',
-  '40',
-  '30',
-  'macro',
-] as const;
-type keyCountTuple = typeof ALL_KEY_COUNT_TYPE;
-export type IKeyboardKeyCountType = keyCountTuple[number];
-
-export const ALL_SPLIT_TYPE = ['split', 'integrated'] as const;
-type splitTuple = typeof ALL_SPLIT_TYPE;
-export type IKeyboardSplitType = splitTuple[number];
-
-export const ALL_STAGGERED_TYPE = [
-  'column_staggered',
-  'row_staggered',
-  'ortholinear',
-  'symmetrical',
-  'alice',
-] as const;
-type staggeredTuple = typeof ALL_STAGGERED_TYPE;
-export type IKeyboardStaggeredType = staggeredTuple[number];
-
-export const ALL_LED_TYPE = ['underglow', 'backlight'] as const;
-type ledTuple = typeof ALL_LED_TYPE;
-export type IKeyboardLedType = ledTuple[number];
-
-export const ALL_KEY_SWITCH_TYPE = [
-  'cherry_mx',
-  'kailh_choc',
-  'kailh_choc_v2',
-  'kailh_mid_height',
-  'alps',
-  'outemulp',
-  'capacitive_sensing_type',
-  'gateron_low_profile',
-] as const;
-type keySwitchTuple = typeof ALL_KEY_SWITCH_TYPE;
-export type IKeyboardKeySwitchType = keySwitchTuple[number];
-
-export const ALL_HOTSWAP_TYPE = ['hot_swap'] as const;
-type hotswapTuple = typeof ALL_HOTSWAP_TYPE;
-export type IKeyboardHotswapType = hotswapTuple[number];
-
-export const ALL_OLED_TYPE = ['oled'] as const;
-type oledTuple = typeof ALL_OLED_TYPE;
-export type IKeyboardOledType = oledTuple[number];
-
-export const ALL_SPEAKER_TYPE = ['speaker'] as const;
-type speakerTuple = typeof ALL_SPEAKER_TYPE;
-export type IKeyboardSpeakerType = speakerTuple[number];
-
-export const ALL_WIRELESS_TYPE = ['wireless'] as const;
-type wirelessTuple = typeof ALL_WIRELESS_TYPE;
-export type IKeyboardWirelessType = wirelessTuple[number];
-
-export type IConditionNotSelected = '---';
-export const CONDITION_NOT_SELECTED: IConditionNotSelected = '---';
 
 /**
  * A single character's typing statistics.
@@ -217,28 +92,6 @@ export const ALL_FLASH_FIRMWARE_DIALOG_MODE = [
 type flashFirmwareDialogModeTuple = typeof ALL_FLASH_FIRMWARE_DIALOG_MODE;
 export type IFlashFirmwareDialogMode = flashFirmwareDialogModeTuple[number];
 
-export const ALL_ORGANIZATIONS_PHASE = [
-  'signing',
-  'init',
-  'processing',
-  'list',
-  'edit',
-  'signout',
-] as const;
-type organizationsPhaseTuple = typeof ALL_ORGANIZATIONS_PHASE;
-export type IOrganizationsPhase = organizationsPhaseTuple[number];
-
-export type IKeyboardFeatures =
-  | IKeyboardKeyCountType
-  | IKeyboardSplitType
-  | IKeyboardStaggeredType
-  | IKeyboardLedType
-  | IKeyboardKeySwitchType
-  | IKeyboardHotswapType
-  | IKeyboardOledType
-  | IKeyboardSpeakerType
-  | IKeyboardWirelessType;
-
 export type IFlashFirmwareDialogFlashMode =
   | 'upload_and_flash'
   | 'fetch_and_flash'
@@ -251,52 +104,6 @@ const KeySwitchOperations = {
 } as const;
 export type IKeySwitchOperation =
   (typeof KeySwitchOperations)[keyof typeof KeySwitchOperations];
-
-export type IBuildableFirmwareCodeParameterType =
-  | 'select'
-  | 'text'
-  | 'number'
-  | 'toggle';
-
-export type IBuildableFirmwareCodeParameter = {
-  name: string;
-  type: IBuildableFirmwareCodeParameterType;
-  options: string[];
-  default: string;
-  comment: string | undefined;
-  startPosition: number;
-  endPosition: number;
-};
-
-export type IBuildableFirmwareCodeParameterValue = {
-  value: string;
-  definition: IBuildableFirmwareCodeParameter;
-};
-
-export type IBuildableFirmwareCodeValueType = 'parameters' | 'code';
-
-export type IBuildableFirmwareCodeParameterValueMap = {
-  // File ID: Parameter Name : Parameter Value
-  [fileId: string]: {
-    type: IBuildableFirmwareCodeValueType;
-    parameters: {
-      [parameterName: string]: IBuildableFirmwareCodeParameterValue;
-    };
-    code: string;
-  };
-};
-
-export type IBuildableFirmwareCodeParameterValues = {
-  keyboard: IBuildableFirmwareCodeParameterValueMap;
-  keymap: IBuildableFirmwareCodeParameterValueMap;
-};
-
-export const WorkbenchPhase = {
-  editing: 'editing',
-  processing: 'processing',
-} as const;
-export type IWorkbenchPhase =
-  (typeof WorkbenchPhase)[keyof typeof WorkbenchPhase];
 
 export type IUserInformation = {
   uid: string;
@@ -448,96 +255,6 @@ export type RootState = {
     };
     typingStats: ITypingStats;
   };
-  keyboards: {
-    app: {
-      phase: IKeyboardsPhase;
-    };
-    createdefinition: {
-      jsonFilename: string;
-      keyboardDefinition: KeyboardDefinitionSchema | null;
-      productName: string;
-      jsonString: string;
-      agreement: boolean;
-      firmwareCodePlace: IFirmwareCodePlace;
-      qmkRepositoryFirstPullRequestUrl: string;
-      forkedRepositoryUrl: string;
-      forkedRepositoryEvidence: string;
-      otherPlaceHowToGet: string;
-      otherPlaceSourceCodeEvidence: string;
-      otherPlacePublisherEvidence: string;
-      contactInformation: string;
-      authorType: IKeyboardDefinitionAuthorType;
-      organizationId: string | undefined;
-      organizationEvidence: string;
-    };
-    editdefinition: {
-      jsonFilename: string;
-      keyboardDefinition: KeyboardDefinitionSchema | null;
-      productName: string;
-      jsonString: string;
-      agreement: boolean;
-      firmwareCodePlace: IFirmwareCodePlace | undefined;
-      qmkRepositoryFirstPullRequestUrl: string;
-      forkedRepositoryUrl: string;
-      forkedRepositoryEvidence: string;
-      otherPlaceHowToGet: string;
-      otherPlaceSourceCodeEvidence: string;
-      otherPlacePublisherEvidence: string;
-      contactInformation: string;
-      features: IKeyboardFeatures[];
-      mainImageUploadedRate: number;
-      mainImageUploading: boolean;
-      subImageUploadedRate: number;
-      subImageUploading: boolean;
-      description: string;
-      stores: IStore[];
-      websiteUrl: string;
-      additionalDescriptions: IAdditionalDescription[];
-      firmwareFile: File | null;
-      firmwareName: string;
-      firmwareDescription: string;
-      firmwareSourceCodeUrl: string;
-      flashSupport: boolean;
-      defaultBootloaderType: IBootloaderType;
-      authorType: IKeyboardDefinitionAuthorType;
-      organizationId: string | undefined;
-      organizationEvidence: string;
-      buildableFirmwareFile: IBuildableFirmwareFile | null;
-      buildableFirmwareFileType: IBuildableFirmwareFileType | null;
-      buildableFirmwareCodeParameters: IBuildableFirmwareCodeParameter[];
-      keyboardStatistics: IKeyboardStatistics | undefined;
-    };
-  };
-  catalog: {
-    app: {
-      phase: ICatalogPhase;
-    };
-    search: {
-      features: IKeyboardFeatures[];
-      keyword: string;
-      organizationId: string | undefined;
-      buildSupport: boolean;
-    };
-    keyboard: {
-      keymaps: {
-        [pos: string]: IKeymap;
-      }[];
-      encodersKeymaps: IEncoderKeymaps[];
-      selectedLayer: number;
-      langLabel: KeyboardLabelLang;
-      selectedKeymapData: AbstractKeymapData | null;
-      buildableFirmwareCodeParameterValues: IBuildableFirmwareCodeParameterValues;
-    };
-  };
-  organizations: {
-    app: {
-      phase: IOrganizationsPhase;
-    };
-    editorganization: {
-      organizationMembers: IOrganizationMember[];
-      email: string;
-    };
-  };
   common: {
     firmware: {
       flashFirmwareDialog: {
@@ -561,51 +278,12 @@ export type RootState = {
   hid: {
     instance: IHid;
   };
-  storage: {
-    instance: IStorage | null;
-  };
-  auth: {
-    instance: IAuth | null;
-  };
-  github: {
-    instance: IGitHub;
-  };
   serial: {
     writer: IFirmwareWriter;
   };
-  workbench: {
-    app: {
-      phase: IWorkbenchPhase;
-      projects: IWorkbenchProject[];
-      currentProject: IWorkbenchProject | undefined;
-      selectedFile:
-        | { fileId: string; fileType: IBuildableFirmwareFileType }
-        | undefined;
-      buildingTasks: IFirmwareBuildingTask[];
-      userPurchaseHistories: IUserPurchaseHistory[] | undefined;
-    };
-  };
 };
 
-let firebaseProvider;
-try {
-  firebaseProvider = new FirebaseProvider(firebaseConfiguration);
-} catch (cause) {
-  if (import.meta.env.NODE_ENV === 'production') {
-    throw cause;
-  } else {
-    console.warn(
-      `To work Remap locally, ignore the situation which Firebase cannot be initialized. ${cause}`
-    );
-    firebaseProvider = null;
-  }
-}
-
-const gitHub = new GitHub();
-
 const firmwareWriter = new FirmwareWriterWebApiImpl();
-
-const localAuthenticationUid = getLocalAuthenticationUid();
 
 export const INIT_STATE: RootState = {
   entities: {
@@ -684,7 +362,7 @@ export const INIT_STATE: RootState = {
       },
     },
     localAuthenticationInfo: {
-      uid: localAuthenticationUid,
+      uid: '',
     },
     autoTypingPracticeAfterConnection: false,
     user: {
@@ -751,97 +429,6 @@ export const INIT_STATE: RootState = {
     },
     typingStats: {},
   },
-  keyboards: {
-    app: {
-      phase: KeyboardsPhase.signing,
-    },
-    createdefinition: {
-      jsonFilename: '',
-      keyboardDefinition: null,
-      productName: '',
-      jsonString: '',
-      agreement: false,
-      firmwareCodePlace: 'qmk',
-      qmkRepositoryFirstPullRequestUrl: '',
-      forkedRepositoryUrl: '',
-      forkedRepositoryEvidence: '',
-      otherPlaceHowToGet: '',
-      otherPlaceSourceCodeEvidence: '',
-      otherPlacePublisherEvidence: '',
-      contactInformation: '',
-      authorType: 'individual',
-      organizationId: undefined,
-      organizationEvidence: '',
-    },
-    editdefinition: {
-      jsonFilename: '',
-      keyboardDefinition: null,
-      productName: '',
-      jsonString: '',
-      agreement: false,
-      firmwareCodePlace: 'qmk',
-      qmkRepositoryFirstPullRequestUrl: '',
-      forkedRepositoryUrl: '',
-      forkedRepositoryEvidence: '',
-      otherPlaceHowToGet: '',
-      otherPlaceSourceCodeEvidence: '',
-      otherPlacePublisherEvidence: '',
-      contactInformation: '',
-      features: [],
-      mainImageUploadedRate: 0,
-      mainImageUploading: false,
-      subImageUploadedRate: 0,
-      subImageUploading: false,
-      description: '',
-      stores: [],
-      websiteUrl: '',
-      additionalDescriptions: [],
-      firmwareFile: null,
-      firmwareName: '',
-      firmwareDescription: '',
-      firmwareSourceCodeUrl: '',
-      flashSupport: false,
-      defaultBootloaderType: 'caterina',
-      authorType: 'individual',
-      organizationId: undefined,
-      organizationEvidence: '',
-      buildableFirmwareFile: null,
-      buildableFirmwareFileType: null,
-      buildableFirmwareCodeParameters: [],
-      keyboardStatistics: undefined,
-    },
-  },
-  catalog: {
-    app: {
-      phase: 'list', // FIXME Should be 'init'
-    },
-    search: {
-      features: [],
-      keyword: '',
-      organizationId: undefined,
-      buildSupport: false,
-    },
-    keyboard: {
-      keymaps: [],
-      encodersKeymaps: [],
-      selectedLayer: 0,
-      langLabel: 'en-us',
-      selectedKeymapData: null,
-      buildableFirmwareCodeParameterValues: {
-        keyboard: {},
-        keymap: {},
-      },
-    },
-  },
-  organizations: {
-    app: {
-      phase: 'signing',
-    },
-    editorganization: {
-      organizationMembers: [],
-      email: '',
-    },
-  },
   common: {
     firmware: {
       flashFirmwareDialog: {
@@ -865,26 +452,7 @@ export const INIT_STATE: RootState = {
   hid: {
     instance: new WebHid(),
   },
-  storage: {
-    instance: firebaseProvider,
-  },
-  auth: {
-    instance: firebaseProvider,
-  },
-  github: {
-    instance: gitHub,
-  },
   serial: {
     writer: firmwareWriter,
-  },
-  workbench: {
-    app: {
-      phase: WorkbenchPhase.processing,
-      projects: [],
-      currentProject: undefined,
-      selectedFile: undefined,
-      buildingTasks: [],
-      userPurchaseHistories: undefined,
-    },
   },
 };

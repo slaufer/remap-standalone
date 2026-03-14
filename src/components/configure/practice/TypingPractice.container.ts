@@ -33,8 +33,6 @@ const mapDispatchToProps = {
   updateStats: PracticeActions.updateStats,
   reset: PracticeActions.reset,
   resetStatistics: PracticeActionsThunk.resetTypingStats,
-  loadTypingStats: PracticeActionsThunk.loadTypingStats,
-  saveTypingStats: PracticeActionsThunk.saveTypingStats,
   finish: PracticeActions.finish,
   updateText: PracticeActions.updateText,
   updateCategory: PracticeActions.updateCategory,
@@ -48,8 +46,6 @@ export type TypingPracticeActionsType = {
   updateStats: typeof PracticeActions.updateStats;
   reset: typeof PracticeActions.reset;
   resetStatistics: (keyboardDefinitionId: string) => void;
-  loadTypingStats: (keyboardDefinitionId: string) => void;
-  saveTypingStats: (keyboardDefinitionId: string) => void;
   finish: typeof PracticeActions.finish;
   updateText: typeof PracticeActions.updateText;
   updateCategory: typeof PracticeActions.updateCategory;

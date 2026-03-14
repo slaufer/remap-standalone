@@ -20,11 +20,10 @@ import {
   NotificationActions,
 } from './actions';
 import { StorageActions, storageActionsThunk } from './storage.action';
-import { sendEventToGoogleAnalytics } from '../utils/GoogleAnalytics';
 import { LayoutOption } from '../components/configure/keymap/Keymap';
 import { maxValueByBitLength } from '../utils/NumberUtils';
 import { KeyOp } from '../gen/types/KeyboardDefinition';
-import { getEncoderIdList, sendOperationLog } from './utils';
+import { getEncoderIdList } from './utils';
 import { bmpKeyInfoList } from '../services/hid/KeycodeInfoListBmp';
 
 const PRODUCT_PREFIX_FOR_BLE_MICRO_PRO = '(BMP)';
@@ -278,27 +277,13 @@ export const hidActionsThunk = {
       dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
       getState: () => RootState
     ) => {
-      const { app, entities, storage, auth } = getState();
+      const { app, entities } = getState();
       const keyboard = entities.keyboard!;
       const result = await keyboard.open();
       if (!result.success) {
         console.error('Could not open');
         dispatch(NotificationActions.addError('Could not open', result.cause));
         return;
-      }
-      sendEventToGoogleAnalytics('configure/open', {
-        vendor_id: keyboard.getInformation().vendorId,
-        product_id: keyboard.getInformation().productId,
-        product_name: keyboard.getInformation().productName,
-      });
-      if (entities.keyboardDefinitionDocument !== null) {
-        await sendOperationLog(
-          auth.instance!,
-          storage.instance!,
-          app.localAuthenticationInfo.uid,
-          entities.keyboardDefinitionDocument.id,
-          'configure/open'
-        );
       }
 
       const isBleMicroPro = keyboard
@@ -494,22 +479,8 @@ export const hidActionsThunk = {
       dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
       getState: () => RootState
     ) => {
-      const { app, entities, storage, auth } = getState();
+      const { app, entities } = getState();
       const keyboard: IKeyboard = entities.keyboard!;
-      sendEventToGoogleAnalytics('configure/flash', {
-        vendor_id: keyboard.getInformation().vendorId,
-        product_id: keyboard.getInformation().productId,
-        product_name: keyboard.getInformation().productName,
-      });
-      if (entities.keyboardDefinitionDocument !== null) {
-        await sendOperationLog(
-          auth.instance!,
-          storage.instance!,
-          app.localAuthenticationInfo.uid,
-          entities.keyboardDefinitionDocument.id,
-          'configure/flash'
-        );
-      }
       const remaps = app.remaps;
       for (let layer = 0; layer < remaps.length; layer++) {
         const remap = remaps[layer];

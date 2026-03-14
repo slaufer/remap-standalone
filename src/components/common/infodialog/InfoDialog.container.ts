@@ -7,7 +7,7 @@ const mapStateToProps = (state: RootState) => {
     keyboard: state.entities.keyboard,
     keyboardDefinition: state.entities.keyboardDefinition,
     keyboardDefinitionDocument: state.entities.keyboardDefinitionDocument,
-    auth: state.auth.instance,
+    auth: undefined,
     organization: state.entities.organization,
     viaProtocolVersion: state.entities.device.viaProtocolVersion,
   };

@@ -10,7 +10,6 @@ import { KeyboardLabelLang } from '../../../services/labellang/KeyLabelLangs';
 import { IKeymap } from '../../../services/hid/Hid';
 import { LayoutOption } from '../keymap/Keymap';
 import { AbstractKeymapData } from '../../../services/storage/Storage';
-import { storageActionsThunk } from '../../../actions/storage.action';
 
 // eslint-disable-next-line no-unused-vars
 const mapStateToProps = (state: RootState) => {
@@ -18,8 +17,7 @@ const mapStateToProps = (state: RootState) => {
     savedKeymaps: state.entities.savedKeymaps,
     keymaps: state.entities.device.keymaps,
     encodersKeymaps: state.entities.device.encodersKeymaps,
-    auth: state.auth.instance,
-    signedIn: state.app.signedIn,
+    signedIn: false,
     sharedKeymaps: state.entities.sharedKeymaps,
     appliedKeymaps: state.entities.appliedKeymaps,
     definitionDocument: state.entities.keyboardDefinitionDocument,
@@ -48,10 +46,9 @@ const mapDispatchToProps = (_dispatch: any) => {
       _dispatch(AppActions.encodersRemapsSetKeys(encodersKeymaps));
       _dispatch(LayoutOptionsActions.restoreLayoutOptions(layoutOptions));
     },
-    createOrUpdateAppliedKeymap: (savedKeymapData: AbstractKeymapData) => {
-      _dispatch(
-        storageActionsThunk.createOrUpdateAppliedKeymap(savedKeymapData)
-      );
+    // eslint-disable-next-line no-unused-vars
+    createOrUpdateAppliedKeymap: (_savedKeymapData: AbstractKeymapData) => {
+      // Cloud feature removed
     },
   };
 };

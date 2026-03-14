@@ -11,12 +11,9 @@ import {
   IUserInformation,
   IUserPurchase,
   RootState,
-  SetupPhase,
 } from '../store/state';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { LayoutOption } from '../components/configure/keymap/Keymap';
-import { hidActionsThunk } from './hid.action';
-import { isSuccessful } from '../types';
 
 export const KEYMAP_ACTIONS = '@Keymap';
 export const KEYMAP_CLEAR_SELECTED_KEY_POSITION = `${KEYMAP_ACTIONS}/ClearSelectedKeyPosition`;
@@ -474,227 +471,15 @@ export const AppActions = {
   },
 };
 
-type ActionTypes = ReturnType<
-  | (typeof AppActions)[keyof typeof AppActions]
-  | (typeof NotificationActions)[keyof typeof NotificationActions]
->;
-type ThunkPromiseAction<T> = ThunkAction<
-  Promise<T>,
-  RootState,
-  undefined,
-  ActionTypes
->;
-export const AppActionsThunk = {
-  // eslint-disable-next-line no-undef
-  logout:
-    (): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      // eslint-disable-next-line no-unused-vars
-      getState: () => RootState
-    ) => {
-      const { auth } = getState();
-      dispatch(AppActions.updateSignedIn(false));
-      dispatch(AppActions.updateUserInformation(undefined));
-      dispatch(AppActions.updateUserPurchase(undefined));
-      await auth.instance!.signOut();
-      dispatch(await hidActionsThunk.closeOpenedKeyboard());
-      dispatch(AppActions.updateSetupPhase(SetupPhase.keyboardNotSelected));
-    },
-  loginWithGitHubAccount:
-    (): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      // eslint-disable-next-line no-unused-vars
-      getState: () => RootState
-    ) => {
-      const { auth } = getState();
-      const result = await auth.instance!.signInWithGitHubWithPopup();
-      if (!result.success) {
-        console.error(result.cause!);
-        dispatch(NotificationActions.addError(result.error!, result.cause));
-      }
-    },
-  loginWithGoogleAccount:
-    (): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      // eslint-disable-next-line no-unused-vars
-      getState: () => RootState
-    ) => {
-      const { auth } = getState();
-      const result = await auth.instance!.signInWithGoogleWithPopup();
-      if (!result.success) {
-        console.error(result.cause!);
-        dispatch(NotificationActions.addError(result.error!, result.cause));
-      }
-    },
-  linkToGoogleAccount:
-    (): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      // eslint-disable-next-line no-unused-vars
-      getState: () => RootState
-    ) => {
-      const { auth } = getState();
-      const result = await auth.instance!.linkToGoogleWithPopup();
-      if (!result.success) {
-        console.error(result.cause!);
-        dispatch(NotificationActions.addError(result.error!, result.cause));
-      }
-    },
-  linkToGitHubAccount:
-    (): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      // eslint-disable-next-line no-unused-vars
-      getState: () => RootState
-    ) => {
-      const { auth } = getState();
-      const result = await auth.instance!.linkToGitHubWithPopup();
-      if (!result.success) {
-        console.error(result.cause!);
-        dispatch(NotificationActions.addError(result.error!, result.cause));
-      }
-    },
-  fetchUserInformation: (): ThunkPromiseAction<void> => {
-    return async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      getState: () => RootState
-    ) => {
-      const { storage, auth, app } = getState();
-      if (!app.signedIn) {
-        dispatch(AppActions.updateUserInformation(undefined));
-        return;
-      }
-      const user = auth.instance!.getCurrentAuthenticatedUserIgnoreNull();
-      if (user === null) {
-        dispatch(AppActions.updateUserInformation(undefined));
-        return;
-      }
-      const result = await storage.instance!.getUserInformation(user.uid);
-      if (isSuccessful(result)) {
-        dispatch(AppActions.updateUserInformation(result.value));
-      } else {
-        console.error(result.cause);
-        dispatch(NotificationActions.addError(result.error, result.cause));
-      }
-    };
-  },
-  fetchUserPurchase: (): ThunkPromiseAction<void> => {
-    return async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      getState: () => RootState
-    ) => {
-      const { storage, auth, app } = getState();
-      if (!app.signedIn) {
-        dispatch(AppActions.updateUserPurchase(undefined));
-        return;
-      }
-      const user = auth.instance!.getCurrentAuthenticatedUserIgnoreNull();
-      if (user === null) {
-        dispatch(AppActions.updateUserPurchase(undefined));
-        return;
-      }
-      const result = await storage.instance!.getUserPurchase(user.uid);
-      if (isSuccessful(result)) {
-        dispatch(AppActions.updateUserPurchase(result.value));
-      } else {
-        console.error(result.cause);
-        dispatch(NotificationActions.addError(result.error, result.cause));
-      }
-    };
-  },
-};
-
 export const PracticeActionsThunk = {
-  loadTypingStats:
-    (keyboardDefinitionId: string): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      getState: () => RootState
-    ) => {
-      const { storage, auth, app } = getState();
-      if (!app.signedIn) {
-        return;
-      }
-      const user = auth.instance!.getCurrentAuthenticatedUserOrNull();
-      if (!user) {
-        return;
-      }
-      const result = await storage.instance!.fetchTypingStats(
-        user.uid,
-        keyboardDefinitionId
-      );
-      if (isSuccessful(result)) {
-        dispatch(
-          PracticeActions.loadStats(keyboardDefinitionId, result.value.stats)
-        );
-      } else {
-        console.error(result.cause);
-      }
-    },
-  saveTypingStats:
-    (keyboardDefinitionId: string): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      getState: () => RootState
-    ) => {
-      const { storage, auth, app, configure } = getState();
-      if (!app.signedIn) {
-        return;
-      }
-      const user = auth.instance!.getCurrentAuthenticatedUserOrNull();
-      if (!user) {
-        return;
-      }
-      const stats = configure.typingStats[keyboardDefinitionId];
-      if (!stats) {
-        return;
-      }
-      const result = await storage.instance!.saveTypingStats(
-        user.uid,
-        keyboardDefinitionId,
-        stats
-      );
-      if (!isSuccessful(result)) {
-        console.error(result.cause);
-        dispatch(
-          NotificationActions.addError(
-            'Failed to save typing statistics',
-            result.cause
-          )
-        );
-      }
-    },
   resetTypingStats:
-    (keyboardDefinitionId: string): ThunkPromiseAction<void> =>
-    async (
-      dispatch: ThunkDispatch<RootState, undefined, ActionTypes>,
-      getState: () => RootState
+    (keyboardDefinitionId: string): ThunkAction<void, RootState, undefined, ReturnType<(typeof AppActions)[keyof typeof AppActions]>> =>
+    (
+      dispatch: ThunkDispatch<RootState, undefined, ReturnType<(typeof AppActions)[keyof typeof AppActions]>>,
+      // eslint-disable-next-line no-unused-vars
+      _getState: () => RootState
     ) => {
-      const { storage, auth, app } = getState();
       dispatch(PracticeActions.resetStatistics(keyboardDefinitionId));
-      if (!app.signedIn) {
-        return;
-      }
-      const user = auth.instance!.getCurrentAuthenticatedUserOrNull();
-      if (!user) {
-        return;
-      }
-      const result = await storage.instance!.deleteTypingStats(
-        user.uid,
-        keyboardDefinitionId
-      );
-      if (!isSuccessful(result)) {
-        console.error(result.cause);
-        dispatch(
-          NotificationActions.addError(
-            'Failed to reset typing statistics',
-            result.cause
-          )
-        );
-      }
     },
 };
 

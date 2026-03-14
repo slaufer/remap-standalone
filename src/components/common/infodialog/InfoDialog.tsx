@@ -22,7 +22,6 @@ import {
   KeyboardDefinitionStatus,
 } from '../../../services/storage/Storage';
 import { KeyboardDefinitionSchema } from '../../../gen/types/KeyboardDefinition';
-import firebase from 'firebase/app';
 import { t } from 'i18next';
 
 const GOOGLE_FORM_URL =
@@ -147,11 +146,7 @@ export default class InfoDialog extends React.Component<
               keyboardDefinitionDocument={this.props.keyboardDefinitionDocument}
               keyboardDefinition={this.props.keyboardDefinition}
               googleFormUrl={this.googleFormUrl}
-              authenticatedUser={
-                this.props.auth
-                  ? this.props.auth.getCurrentAuthenticatedUserIgnoreNull()
-                  : undefined
-              }
+              authenticatedUser={undefined}
               organization={this.props.organization}
             />
           </Grid>
@@ -165,7 +160,7 @@ type IKeyboardDefinitionSectionProps = {
   keyboardDefinitionDocument: IKeyboardDefinitionDocument | null | undefined;
   keyboardDefinition: KeyboardDefinitionSchema | null | undefined;
   googleFormUrl: string;
-  authenticatedUser: firebase.User | undefined;
+  authenticatedUser: { uid: string } | undefined;
   organization: IOrganization | null | undefined;
 };
 

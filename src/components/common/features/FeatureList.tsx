@@ -1,4 +1,4 @@
-import { IKeyboardFeatures } from '../../../store/state';
+import { IKeyboardFeatures } from '../../../services/storage/Storage';
 import React from 'react';
 import { Chip, Tooltip } from '@mui/material';
 

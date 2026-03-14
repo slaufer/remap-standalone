@@ -1,7 +1,5 @@
 import { LayoutOption } from '../../components/configure/keymap/Keymap';
 import {
-  IFirmwareCodePlace,
-  IKeyboardFeatures,
   IUserPurchase,
   IUserInformation,
   ITypingStatsPerKeyboard,
@@ -10,6 +8,58 @@ import { IDeviceInformation } from '../hid/Hid';
 import { KeyboardLabelLang } from '../labellang/KeyLabelLangs';
 import { IBootloaderType } from '../firmware/Types';
 import { IEmptyResult, IResult } from '../../types';
+
+export type IFirmwareCodePlace = 'qmk' | 'forked' | 'other';
+export const FirmwareCodePlace: { [p: string]: IFirmwareCodePlace } = {
+  qmk: 'qmk',
+  forked: 'forked',
+  other: 'other',
+};
+
+export type IKeyboardKeyCountType =
+  | 'over_100'
+  | '100'
+  | '90'
+  | '80'
+  | '70'
+  | '60'
+  | '50'
+  | '40'
+  | '30'
+  | 'macro';
+export type IKeyboardSplitType = 'split' | 'integrated';
+export type IKeyboardStaggeredType =
+  | 'column_staggered'
+  | 'row_staggered'
+  | 'ortholinear'
+  | 'symmetrical'
+  | 'alice';
+export type IKeyboardLedType = 'underglow' | 'backlight';
+export type IKeyboardKeySwitchType =
+  | 'cherry_mx'
+  | 'kailh_choc'
+  | 'kailh_choc_v2'
+  | 'kailh_box'
+  | 'kailh_mid_height'
+  | 'alps'
+  | 'topre'
+  | 'outemulp'
+  | 'capacitive_sensing_type'
+  | 'gateron_low_profile';
+export type IKeyboardHotswapType = 'hot_swap';
+export type IKeyboardOledType = 'oled';
+export type IKeyboardSpeakerType = 'speaker';
+export type IKeyboardWirelessType = 'wireless';
+export type IKeyboardFeatures =
+  | IKeyboardKeyCountType
+  | IKeyboardSplitType
+  | IKeyboardStaggeredType
+  | IKeyboardLedType
+  | IKeyboardKeySwitchType
+  | IKeyboardHotswapType
+  | IKeyboardOledType
+  | IKeyboardSpeakerType
+  | IKeyboardWirelessType;
 
 export type IKeyboardDefinitionStatus =
   | 'draft'
