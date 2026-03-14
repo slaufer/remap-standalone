@@ -37,7 +37,12 @@ import KeymapListPopover from '../keymaplist/KeymapListPopover.container';
 import { sendEventToGoogleAnalytics } from '../../../utils/GoogleAnalytics';
 import { Restore as RestoreIcon } from '@mui/icons-material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { t } from 'i18next';
+import download from 'downloadjs';
+import { serializeKeymapToJson } from '../../../utils/KeymapJsonSerializer';
+import KeymapImportJsonDialog from './KeymapImportJsonDialog.container';
 
 type OwnProp = {};
 
@@ -50,6 +55,7 @@ type OwnKeymapMenuStateType = {
   layoutOptionPopoverPosition: { left: number; top: number } | null;
   keymapListPopoverPosition: { left: number; top: number } | null;
   openImportDefDialog: boolean;
+  openImportJsonDialog: boolean;
   subMenuAnchorEl: (EventTarget & Element) | null;
   openConfirmDialog: boolean;
 };
@@ -65,6 +71,7 @@ export default class KeymapMenu extends React.Component<
       layoutOptionPopoverPosition: null,
       keymapListPopoverPosition: null,
       openImportDefDialog: false,
+      openImportJsonDialog: false,
       subMenuAnchorEl: null,
       openConfirmDialog: false,
     };
@@ -214,6 +221,37 @@ export default class KeymapMenu extends React.Component<
 
   private onClickResetKeymap() {
     this.setState({ subMenuAnchorEl: null, openConfirmDialog: true });
+  }
+
+  private onClickExportJson() {
+    this.onCloseSubmenu();
+    const { vendorId, productId, productName } =
+      this.props.keyboard!.getInformation();
+    const data = serializeKeymapToJson({
+      keymaps: this.props.keymaps!,
+      encodersKeymaps: this.props.encodersKeymaps,
+      layerCount: this.props.layerCount!,
+      vendorId,
+      productId,
+      productName,
+      labelLang: this.props.labelLang!,
+      layoutOptions: this.props.selectedKeyboardOptions!,
+    });
+    const filename = `keymap_${productName}.json`;
+    download(JSON.stringify(data, null, 2), filename, 'application/json');
+    sendEventToGoogleAnalytics('configure/export_keymap_json', {
+      vendor_id: vendorId,
+      product_id: productId,
+      product_name: productName,
+    });
+  }
+
+  private onClickOpenImportJsonDialog() {
+    this.setState({ subMenuAnchorEl: null, openImportJsonDialog: true });
+  }
+
+  private onCloseImportJsonDialog() {
+    this.setState({ openImportJsonDialog: false });
   }
 
   render() {
@@ -366,6 +404,20 @@ export default class KeymapMenu extends React.Component<
                 </ListItemIcon>
                 <ListItemText primary={t('Reset Keymap')} />
               </MenuItem>
+
+              <MenuItem onClick={this.onClickExportJson.bind(this)}>
+                <ListItemIcon>
+                  <FileDownloadIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary={t('Export keymap as JSON')} />
+              </MenuItem>
+
+              <MenuItem onClick={this.onClickOpenImportJsonDialog.bind(this)}>
+                <ListItemIcon>
+                  <FileUploadIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary={t('Import keymap from JSON')} />
+              </MenuItem>
             </Menu>
           </div>
         </div>
@@ -384,6 +436,10 @@ export default class KeymapMenu extends React.Component<
           vendorId={vendorId}
           productId={productId}
           productName={productName}
+        />
+        <KeymapImportJsonDialog
+          open={this.state.openImportJsonDialog}
+          onClose={this.onCloseImportJsonDialog.bind(this)}
         />
         <ConfirmDialog
           open={this.state.openConfirmDialog}
