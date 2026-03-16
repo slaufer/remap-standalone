@@ -42,6 +42,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Install Python setuptools (macOS)
+        if: runner.os == 'macOS'
+        run: pip3 install setuptools
+
       - name: Install dependencies
         run: yarn install --immutable
 
