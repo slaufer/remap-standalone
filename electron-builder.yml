@@ -7,6 +7,9 @@ directories:
   # Override the default ("build") to avoid colliding with Vite's output directory
   buildResources: buildAssets
 
+# No native modules need rebuilding — the app is a pure React bundle in an Electron shell
+npmRebuild: false
+
 # Only include what is needed: compiled main process + web build + manifest
 files:
   - electron-out/**/*
