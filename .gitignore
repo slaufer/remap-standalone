@@ -18,6 +18,7 @@
 
 # misc
 /.claude
+/memory
 .DS_Store
 .vscode
 .eslintcache

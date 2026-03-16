@@ -33,7 +33,6 @@ mac:
 linux:
   target:
     - AppImage
-    - deb
   icon: public/logo512.png
   category: Utility
 
