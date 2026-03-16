@@ -1,3 +1,16 @@
+# Remap (HolyKeebs Fork)
+
+> **This is a fork of [remap-keys/remap](https://github.com/remap-keys/remap)**, maintained for personal use with HolyKeebs keyboards (primarily Keyball61). It exists because I wanted a guaranteed way to keep editing my keymap without depending on any external service staying online.
+>
+> **Key differences from upstream:**
+>
+> - No Firebase, no cloud backend — works fully offline
+> - No Google Analytics or telemetry
+> - No PayPal / payment features
+> - Bundled VIA keyboard definitions — no internet required to recognize connected keyboards
+> - Electron desktop app is the primary distribution (no hosted web service)
+> - Keymap JSON export/import — back up your full keymap to a file and restore it at any time
+
 # Remap
 
 The product named "Remap" is a keyboard customization app to utilize keyboards more for people who are interested in self-made keyboard kits.
@@ -42,11 +55,11 @@ Remap is also available as a cross-platform desktop application built with Elect
 
 ### Installation
 
-Download the latest installer for your platform from the [GitHub Releases page](https://github.com/remap-keys/remap/releases):
+Download the latest installer for your platform from the [GitHub Releases page](https://github.com/holykeebs/remap/releases):
 
 - **Windows**: `.exe` (NSIS installer)
 - **macOS**: `.dmg`
-- **Linux**: `.AppImage` or `.deb`
+- **Linux**: `.AppImage`
 
 ### Linux: udev rules for WebHID
 
@@ -77,6 +90,13 @@ yarn electron:build
 yarn electron:dist
 # Output: dist-electron/
 ```
+
+## Keymap JSON Export / Import
+
+The Configure page includes export and import actions in the keymap toolbar menu. This lets you back up your full keymap to a file and restore it later — useful for keeping a copy of your layout outside of the app.
+
+- **Export JSON**: Downloads a `keymap_<keyboard>.json` file containing all layers, layout options, and encoder mappings for the connected keyboard.
+- **Import JSON**: Opens a file picker to load a previously exported keymap file and apply it to the connected keyboard. The app warns you if the file was exported from a different keyboard model, but still lets you proceed.
 
 ## References
 
