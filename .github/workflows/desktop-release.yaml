@@ -44,7 +44,7 @@ jobs:
 
       - name: Install Python setuptools (macOS)
         if: runner.os == 'macOS'
-        run: pip3 install setuptools
+        run: pip3 install setuptools --break-system-packages
 
       - name: Install dependencies
         run: yarn install --immutable
