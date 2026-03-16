@@ -88,7 +88,10 @@ describe('serializeKeymapToJson', () => {
   it('includes encoder keymaps when present', () => {
     const layer0 = { '0,0': makeKeymap(4) };
     const encoderLayer0 = {
-      0: { clockwise: makeKeymap(0x004b), counterclockwise: makeKeymap(0x004e) },
+      0: {
+        clockwise: makeKeymap(0x004b),
+        counterclockwise: makeKeymap(0x004e),
+      },
     };
 
     const result = serializeKeymapToJson({

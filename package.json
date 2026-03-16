@@ -54,7 +54,8 @@
     "build-storybook": "NODE_OPTIONS=--openssl-legacy-provider build-storybook -s public",
     "electron:start": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:build": "vite build && tsc -p electron/tsconfig.json",
-    "electron:dist": "yarn electron:build && electron-builder"
+    "electron:dist": "yarn electron:build && electron-builder",
+    "fetch-definitions": "node scripts/fetch-via-definitions.mjs"
   },
   "eslintConfig": {
     "extends": [

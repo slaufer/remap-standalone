@@ -1,8 +1,5 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import {
-  RootState,
-  SetupPhase,
-} from '../store/state';
+import { RootState, SetupPhase } from '../store/state';
 import {
   AppActions,
   KeymapActions,
@@ -13,6 +10,7 @@ import {
 } from './actions';
 import { HidActions, hidActionsThunk } from './hid.action';
 import { KeyboardDefinitionSchema } from '../gen/types/KeyboardDefinition';
+import { findByDeviceInfo as findBundledDefinition } from '../services/storage/BundledDefinitions';
 import {
   AppliedKeymapData,
   IBuildableFirmware,
@@ -222,10 +220,8 @@ export const storageActionsThunk = {
 
   fetchKeyboardDefinitionByDeviceInfo:
     (
-      // eslint-disable-next-line no-unused-vars
-      _vendorId: number,
-      // eslint-disable-next-line no-unused-vars
-      _productId: number,
+      vendorId: number,
+      productId: number,
       // eslint-disable-next-line no-unused-vars
       _productName: string
     ): ThunkPromiseAction<void> =>
@@ -234,9 +230,15 @@ export const storageActionsThunk = {
       // eslint-disable-next-line no-unused-vars
       _getState: () => RootState
     ) => {
-      // Without Firebase, always prompt for local keyboard definition file upload.
-      dispatch(
-        AppActions.updateSetupPhase(SetupPhase.waitingKeyboardDefinitionUpload)
-      );
+      const bundled = await findBundledDefinition(vendorId, productId);
+      if (bundled) {
+        await dispatch(storageActionsThunk.uploadKeyboardDefinition(bundled));
+      } else {
+        dispatch(
+          AppActions.updateSetupPhase(
+            SetupPhase.waitingKeyboardDefinitionUpload
+          )
+        );
+      }
     },
 };

@@ -473,9 +473,20 @@ export const AppActions = {
 
 export const PracticeActionsThunk = {
   resetTypingStats:
-    (keyboardDefinitionId: string): ThunkAction<void, RootState, undefined, ReturnType<(typeof AppActions)[keyof typeof AppActions]>> =>
     (
-      dispatch: ThunkDispatch<RootState, undefined, ReturnType<(typeof AppActions)[keyof typeof AppActions]>>,
+      keyboardDefinitionId: string
+    ): ThunkAction<
+      void,
+      RootState,
+      undefined,
+      ReturnType<(typeof AppActions)[keyof typeof AppActions]>
+    > =>
+    (
+      dispatch: ThunkDispatch<
+        RootState,
+        undefined,
+        ReturnType<(typeof AppActions)[keyof typeof AppActions]>
+      >,
       // eslint-disable-next-line no-unused-vars
       _getState: () => RootState
     ) => {

@@ -115,23 +115,22 @@ export class Keyboard implements IKeyboard {
   }
 
   async open(): Promise<IResult> {
-    if (this.isOpened()) {
-      return {
-        success: false,
-        error: 'The keyboard already connected and opened.',
-      };
-    }
     const device = this.getDevice();
-    try {
-      await device.open();
-      device.addEventListener('inputreport', this.handleInputReport);
-    } catch (error) {
-      return {
-        success: false,
-        error: 'The device cannot be opened.',
-        cause: error,
-      };
+    if (!this.isOpened()) {
+      try {
+        await device.open();
+      } catch (error) {
+        return {
+          success: false,
+          error: 'The device cannot be opened.',
+          cause: error,
+        };
+      }
     }
+    // Register the inputreport listener whether or not the device was already
+    // open. On page reload the HIDDevice object may persist in an opened state
+    // while this Keyboard instance is new and has no listener registered yet.
+    device.addEventListener('inputreport', this.handleInputReport);
     return {
       success: true,
     };

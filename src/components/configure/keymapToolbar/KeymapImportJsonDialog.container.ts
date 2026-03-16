@@ -60,8 +60,9 @@ const mapDispatchToProps = (
         _dispatch(KeydiffActions.clearKeydiff());
         _dispatch(AppActions.remapsSetKeys(remaps));
         _dispatch(AppActions.encodersRemapsSetKeys(encoderRemaps));
-        _dispatch(LayoutOptionsActions.restoreLayoutOptions(data.layoutOptions));
-
+        _dispatch(
+          LayoutOptionsActions.restoreLayoutOptions(data.layoutOptions)
+        );
       };
       dispatch(thunk);
     },

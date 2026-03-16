@@ -105,10 +105,7 @@ import { AnyKey } from '../components/configure/keycodekey/KeycodeKey';
 import { KeycodeInfo } from '../components/configure/keycodekey/KeycodeKey.container';
 import { Key } from '../components/configure/keycodekey/KeyGen';
 import { IKeyboard, IKeycodeCategory } from '../services/hid/Hid';
-import {
-  INIT_STATE,
-  RootState,
-} from './state';
+import { INIT_STATE, RootState } from './state';
 import {
   MACRO_EDITOR_ACTIONS,
   MACRO_EDITOR_CLEAR_KEY,

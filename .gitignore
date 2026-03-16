@@ -14,8 +14,10 @@
 # electron desktop build output
 /dist-electron
 /electron-out
+/dist
 
 # misc
+/.claude
 .DS_Store
 .vscode
 .eslintcache
