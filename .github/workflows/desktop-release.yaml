@@ -9,6 +9,8 @@ jobs:
   release:
     name: Build Desktop (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -44,8 +46,6 @@ jobs:
         run: yarn install --immutable
 
       - name: Build desktop app
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn electron:dist
 
       - name: Upload artifacts to GitHub Release
