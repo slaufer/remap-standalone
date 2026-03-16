@@ -1,6 +1,6 @@
-# Remap (HolyKeebs Fork)
+# Remap (Standalone Fork)
 
-> **This is a fork of [remap-keys/remap](https://github.com/remap-keys/remap)**, maintained for personal use with HolyKeebs keyboards (primarily Keyball61). It exists because I wanted a guaranteed way to keep editing my keymap without depending on any external service staying online.
+> **This is a fork of [remap-keys/remap](https://github.com/remap-keys/remap)**, maintained for personal use with QMK keyboards (primarily Keyball61). It exists because I wanted a guaranteed way to keep editing my keymap without depending on any external service staying online.
 >
 > **Key differences from upstream:**
 >
@@ -55,7 +55,7 @@ Remap is also available as a cross-platform desktop application built with Elect
 
 ### Installation
 
-Download the latest installer for your platform from the [GitHub Releases page](https://github.com/holykeebs/remap/releases):
+Download the latest installer for your platform from the [GitHub Releases page](https://github.com/slaufer/remap-standalone/releases):
 
 - **Windows**: `.exe` (NSIS installer)
 - **macOS**: `.dmg`
