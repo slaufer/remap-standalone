@@ -15,17 +15,13 @@ files:
 
 win:
   target:
-    - target: nsis
+    - target: portable
       arch: [x64]
   icon: public/logo512.png
 
-nsis:
-  oneClick: false
-  allowToChangeInstallationDirectory: true
-
 mac:
   target:
-    - target: dmg
+    - target: zip
       arch: [x64, arm64]
   icon: public/logo512.png
   category: public.app-category.utilities
