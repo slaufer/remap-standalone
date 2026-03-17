@@ -171,11 +171,6 @@ function KeyboardDefinitionSection(props: IKeyboardDefinitionSectionProps) {
       props.keyboardDefinitionDocument.authorType === 'individual'
         ? props.keyboardDefinitionDocument?.githubDisplayName
         : props.organization?.name;
-    const designerWebsite =
-      !props.keyboardDefinitionDocument?.authorType ||
-      props.keyboardDefinitionDocument.authorType === 'individual'
-        ? props.keyboardDefinitionDocument?.githubUrl
-        : props.organization?.website_url;
     return (
       <React.Fragment>
         <Grid item xs={12} className="option-info-label">
@@ -195,11 +190,7 @@ function KeyboardDefinitionSection(props: IKeyboardDefinitionSectionProps) {
           <React.Fragment>
             <InfoRow
               label={t('Registered by')}
-              value={
-                <a href={designerWebsite} target="_blank" rel="noreferrer">
-                  {designerName}
-                </a>
-              }
+              value={<span>{designerName}</span>}
             />
             <InfoRow
               label={t('Status')}
@@ -218,8 +209,6 @@ function KeyboardDefinitionSection(props: IKeyboardDefinitionSectionProps) {
                     )}{' '}
                     <a
                       href={`/keyboards/${props.keyboardDefinitionDocument.id}`}
-                      target="_blank"
-                      rel="noreferrer"
                     >
                       here
                     </a>
@@ -231,15 +220,8 @@ function KeyboardDefinitionSection(props: IKeyboardDefinitionSectionProps) {
               <Grid item xs={12} className="option-info-label">
                 <div className="info-dialog-information-message">
                   {t(
-                    'If you think that the person above does not have any rights for the keyboard and the keyboard definition (in the case of the person is not original keyboard designer or etc.), please report it to the Remap team from this form:'
+                    'If you think that the person above does not have any rights for the keyboard and the keyboard definition (in the case of the person is not original keyboard designer or etc.), please report it to the Remap team.'
                   )}
-                  <a
-                    href={props.googleFormUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {t('Here')}
-                  </a>
                 </div>
               </Grid>
             )}
@@ -249,7 +231,7 @@ function KeyboardDefinitionSection(props: IKeyboardDefinitionSectionProps) {
             <div className="info-dialog-information-message">
               Are you a designer of this keyboard? If yes, please register your
               keyboard to Remap from{' '}
-              <a href={'/keyboards'} target="_blank" rel="noreferrer">
+              <a href={'/keyboards'}>
                 here
               </a>
               .

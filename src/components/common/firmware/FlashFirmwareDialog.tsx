@@ -159,11 +159,7 @@ export default function FlashFirmwareDialog(
               )}
               <br />
               {t('* Please read:')}{' '}
-              <Link
-                href="/docs/faq#faq-firmware-writing-feature"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Link href="/docs/faq#faq-firmware-writing-feature">
                 {t('Frequently Asked Questions')}
               </Link>
               .

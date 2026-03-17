@@ -218,13 +218,12 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
           </div>
 
           <div className="header-logo">
-            <a
-              href="/"
+            <div
               onMouseEnter={this.startLogoAnim.bind(this)}
               onMouseLeave={this.endLogoAnim.bind(this)}
             >
               <Logo width={100} animation={this.state.logoAnimation} />
-            </a>
+            </div>
           </div>
 
           <div className="header-right">
