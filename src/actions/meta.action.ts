@@ -12,12 +12,12 @@ export const MetaActions = {
     return {
       type: META_UPDATE,
       value: {
-        title: data.title || 'Remap',
+        title: data.title || 'Remap Standalone',
         description:
           data.description ||
           'Remap allows you to find, build, set up and customize your keyboard quickly and easily in Web Browser.',
-        url: data.url || 'https://remap-keys.app/',
-        image: data.image || 'https://remap-keys.app/ogp_image.png',
+        url: data.url || '',
+        image: data.image || '',
       },
     };
   },

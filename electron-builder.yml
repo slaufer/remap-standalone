@@ -1,6 +1,6 @@
-appId: app.remap-keys.remap
-productName: Remap
-copyright: Copyright © 2024 Remap
+appId: app.remap-standalone.remap-standalone
+productName: Remap Standalone
+copyright: Copyright © 2024 Remap (upstream). This fork (remap-standalone) is independently maintained.
 
 directories:
   output: dist-electron

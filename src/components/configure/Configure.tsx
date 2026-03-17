@@ -20,7 +20,7 @@ import { Button, CssBaseline } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { UnsupportedBrowser } from '../common/unsupportedbrowser/UnsupportedBrowser';
 
-const APPLICATION_NAME = 'Remap';
+const APPLICATION_NAME = 'Remap Standalone';
 
 type OwnProps = {};
 type ConfigureProps = OwnProps &
